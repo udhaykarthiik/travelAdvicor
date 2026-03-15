@@ -730,3 +730,4 @@ if __name__ == '__main__':
     print("🌐 http://127.0.0.1:5000")
     print("="*70 + "\n")
     app.run(debug=True)
+    app = app
