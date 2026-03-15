@@ -4,66 +4,345 @@
 
 {% block extra_css %}
 <style>
+    :root {
+        --db-950: #040c18;
+        --db-900: #060e1a;
+        --db-850: #081220;
+        --db-800: #0a1628;
+        --db-750: #0d1b30;
+        --db-700: #102038;
+        --db-650: #152640;
+
+        --cyan-500: #1a7fff;
+        --cyan-400: #4da3ff;
+        --cyan-300: #80c2ff;
+        --cyan-200: #a8d8ff;
+
+        --teal-400: #00d8c6;
+        --teal-300: #33e0d0;
+
+        --amber-400: #f5b833;
+        --amber-300: #fac966;
+        --amber-200: #fddea0;
+
+        --green-400: #00d47a;
+        --green-300: #33de96;
+
+        --red-400: #ff6178;
+        --red-300: #ff8596;
+
+        --t-primary:   #f0f6ff;
+        --t-secondary: #c8daf0;
+        --t-tertiary:  #8bafc8;
+        --t-muted:     #5a7a96;
+
+        --border:        rgba(26,127,255,0.18);
+        --border-strong: rgba(26,127,255,0.35);
+        --glow-cyan: 0 0 20px rgba(26,127,255,0.28), 0 0 48px rgba(26,127,255,0.1);
+        --shadow:    0 8px 28px rgba(0,0,0,0.55);
+    }
+
+    /* ── PAGE BACKGROUND ── */
+    body {
+        background: linear-gradient(160deg, #020c1a 0%, #040f20 50%, #030d1c 100%) !important;
+        background-attachment: fixed !important;
+    }
+
+    /* ── PROFILE HEADER ── */
     .profile-header {
-        background: linear-gradient(135deg, #0b1e33 0%, #1a3a5c 100%);
-        color: white;
-        padding: 2rem 0;
+        background: linear-gradient(135deg, #040c18 0%, #0d1b30 60%, #091523 100%);
+        border-bottom: 1px solid var(--border-strong);
+        color: var(--t-primary);
+        padding: 2.5rem 0;
         margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
     }
-    
-    .stat-card {
-        background: white;
-        border-radius: 10px;
-        padding: 1.5rem;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
+    .profile-header::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--cyan-500), var(--teal-400), var(--cyan-300));
     }
-    
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    .profile-header::before {
+        content: '✈';
+        position: absolute;
+        right: 5%; bottom: -10%;
+        font-size: 10rem;
+        opacity: 0.04;
+        pointer-events: none;
     }
-    
-    .stat-number {
+    .profile-header h1 {
+        color: var(--t-primary) !important;
+        font-weight: 800;
         font-size: 2rem;
+        letter-spacing: -0.02em;
+    }
+    .profile-header h1 i { color: var(--cyan-400) !important; }
+    .profile-header p  { color: var(--t-secondary) !important; margin-bottom: 0.2rem; }
+    .profile-header small { color: var(--t-tertiary) !important; font-size: 0.82rem; }
+
+    /* Logout button in header */
+    .profile-header .btn-danger {
+        background: linear-gradient(135deg, #c0392b, #8b0000) !important;
+        border: none !important;
+        color: #ffffff !important;
         font-weight: 700;
-        color: #e63946;
+        border-radius: 50px;
+        padding: 0.55rem 1.5rem;
+        box-shadow: 0 4px 14px rgba(192,57,43,0.35);
+        transition: all 0.25s;
     }
-    
-    .trip-card {
-        border-left: 4px solid #1a3a5c;
+    .profile-header .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(192,57,43,0.5);
+        color: #ffffff !important;
+    }
+
+    /* ── STAT CARDS ── */
+    .stat-card {
+        background: var(--db-800);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.6rem 1rem;
+        text-align: center;
+        box-shadow: var(--shadow);
+        transition: all 0.25s;
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--cyan-500), var(--teal-400));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-6px);
+        border-color: var(--cyan-400);
+        box-shadow: var(--shadow), var(--glow-cyan);
+        background: var(--db-750);
+    }
+    .stat-card:hover::before { transform: scaleX(1); }
+
+    /* Icon in stat card */
+    .stat-card .fs-1 { font-size: 2.2rem !important; filter: drop-shadow(0 0 8px currentColor); }
+    .stat-card .text-primary { color: var(--cyan-400) !important; }
+    .stat-card .text-success  { color: var(--green-400) !important; }
+    .stat-card .text-warning  { color: var(--amber-400) !important; }
+
+    .stat-number {
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--t-primary) !important;   /* BRIGHT — was barely visible */
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin: 0.3rem 0;
+        background: linear-gradient(135deg, #f0f6ff, var(--cyan-200));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-card .text-muted {
+        color: var(--t-tertiary) !important;  /* "Saved Trips" label visible */
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    /* ── MAIN CARDS ── */
+    .card {
+        background: var(--db-800) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 16px !important;
+        box-shadow: var(--shadow) !important;
+        color: var(--t-secondary);
+    }
+
+    .card-header {
+        border-bottom: 1px solid var(--border) !important;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1rem 1.4rem;
+    }
+    .card-header.bg-success {
+        background: linear-gradient(135deg, #072a1a, #0a3322) !important;
+        color: #ffffff !important;
+    }
+    .card-header.bg-info {
+        background: linear-gradient(135deg, #071e40, #0d2a55) !important;
+        color: #ffffff !important;
+    }
+    .card-header h5 {
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .card-header h5 i { color: rgba(255,255,255,0.85) !important; }
+    .card-body { background: transparent !important; }
+
+    /* ── TABLE ── */
+    .table {
+        color: var(--t-secondary) !important;  /* row text visible */
+        border-color: var(--border) !important;
+        margin-bottom: 0;
+    }
+    .table thead th {
+        background: rgba(26,127,255,0.1) !important;
+        color: var(--cyan-200) !important;     /* COLUMN HEADERS */
+        border-bottom: 1px solid var(--border-strong) !important;
+        border-top: none !important;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        padding: 0.85rem 1rem;
+        white-space: nowrap;
+    }
+    .table tbody td {
+        color: var(--t-secondary) !important;  /* cell text */
+        border-bottom: 1px solid var(--border) !important;
+        padding: 0.9rem 1rem;
+        vertical-align: middle;
+        background: transparent !important;
+    }
+    .table tbody tr:hover td {
+        background: rgba(26,127,255,0.06) !important;
+        color: var(--t-primary) !important;
+    }
+    .table tbody tr:last-child td { border-bottom: none !important; }
+
+    /* Destination strong text */
+    .table tbody td strong {
+        color: var(--t-primary) !important;    /* BRIGHT destination name */
+        font-weight: 700;
+    }
+
+    /* Duration text */
+    .table tbody td:nth-child(2) { color: var(--t-secondary) !important; }
+
+    /* "Saved On" small text */
+    .table .text-muted,
+    .table small.text-muted { color: var(--t-tertiary) !important; }
+
+    /* ── BUDGET BADGES ── */
+    .badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.35rem 0.9rem;
+        border-radius: 50px;
+    }
+    .badge.bg-warning {
+        background: rgba(245,184,51,0.18) !important;
+        border: 1px solid rgba(245,184,51,0.4) !important;
+        color: var(--amber-200) !important;    /* Luxury — visible */
+    }
+    .badge.bg-info {
+        background: rgba(26,127,255,0.18) !important;
+        border: 1px solid var(--border-strong) !important;
+        color: var(--cyan-200) !important;     /* Budget — visible */
+    }
+    .badge.bg-success {
+        background: rgba(0,212,122,0.14) !important;
+        border: 1px solid rgba(0,212,122,0.35) !important;
+        color: var(--green-300) !important;    /* Medium — visible */
+    }
+
+    /* ── ACTION BUTTONS ── */
+    .btn-group-sm .btn {
+        border-radius: 8px !important;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.82rem;
+        font-weight: 600;
         transition: all 0.2s;
-        margin-bottom: 1rem;
     }
-    
-    .trip-card:hover {
-        transform: translateX(5px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .btn-outline-primary {
+        border-color: var(--border-strong) !important;
+        color: var(--cyan-300) !important;     /* eye icon button */
+        background: transparent !important;
     }
-    
-    .delete-btn {
-        color: #dc3545;
-        cursor: pointer;
+    .btn-outline-primary:hover {
+        background: rgba(26,127,255,0.15) !important;
+        border-color: var(--cyan-400) !important;
+        color: #ffffff !important;
+        transform: scale(1.08);
+    }
+    .btn-outline-danger {
+        border-color: rgba(255,97,120,0.4) !important;
+        color: var(--red-300) !important;      /* trash icon button */
+        background: transparent !important;
+    }
+    .btn-outline-danger:hover {
+        background: rgba(255,61,90,0.15) !important;
+        border-color: var(--red-400) !important;
+        color: #ffffff !important;
+        transform: scale(1.08);
+    }
+
+    /* ── TRIP TYPE EMOJI CELL ── */
+    .table tbody td:nth-child(4) { color: var(--t-secondary) !important; }
+
+    /* ── RECENT ACTIVITY LIST ── */
+    .list-group-item {
+        background: var(--db-750) !important;
+        border: none !important;
+        border-bottom: 1px solid var(--border) !important;
+        color: var(--t-secondary) !important;  /* VISIBLE */
+        padding: 1rem 1.2rem;
         transition: all 0.2s;
     }
-    
-    .delete-btn:hover {
-        transform: scale(1.1);
-        color: #c82333;
+    .list-group-item:first-child { border-radius: 0 !important; }
+    .list-group-item:last-child  { border-bottom: none !important; }
+    .list-group-item:hover {
+        background: rgba(26,127,255,0.08) !important;
+        color: var(--t-primary) !important;
     }
-    
+    .list-group-item strong { color: var(--t-primary) !important; font-weight: 700; }
+    .list-group-item small,
+    .list-group-item .text-muted { color: var(--t-tertiary) !important; }
+    .list-group-item .text-danger { color: var(--red-400) !important; }
+
+    /* ── EMPTY STATE ── */
     .empty-state {
         text-align: center;
-        padding: 3rem;
-        background: #f8f9fa;
-        border-radius: 10px;
+        padding: 3.5rem 2rem;
+        background: var(--db-750);
+        border-radius: 14px;
+        border: 1px dashed var(--border-strong);
     }
-    
     .empty-state i {
         font-size: 4rem;
-        color: #dee2e6;
+        color: var(--t-muted) !important;
         margin-bottom: 1rem;
+        display: block;
+    }
+    .empty-state h5 { color: var(--t-primary) !important; font-weight: 700; }
+    .empty-state p  { color: var(--t-tertiary) !important; }
+    .empty-state .btn {
+        background: linear-gradient(135deg, var(--cyan-500), #0052cc) !important;
+        border: none !important;
+        color: #ffffff !important;
+        font-weight: 700;
+        border-radius: 50px;
+        padding: 0.7rem 2rem;
+        box-shadow: var(--glow-cyan);
+        transition: all 0.25s;
+    }
+    .empty-state .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 28px rgba(26,127,255,0.4), 0 8px 20px rgba(0,0,0,0.4);
+        color: #ffffff !important;
+    }
+
+    /* ── RESPONSIVE TABLE ── */
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
     }
 </style>
 {% endblock %}
@@ -72,16 +351,13 @@
 <!-- Profile Header -->
 <div class="profile-header">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <h1 class="mb-1">
-                    <i class="bi bi-person-circle me-2"></i>
-                    {{ current_user.username }}
+                    <i class="bi bi-person-circle me-2"></i>{{ current_user.username }}
                 </h1>
-                <p class="mb-0">{{ current_user.email }}</p>
-                <small class="text-white-50">
-                    Member since: {{ current_user.created_at.strftime('%B %d, %Y') }}
-                </small>
+                <p class="mb-1">{{ current_user.email }}</p>
+                <small>Member since: {{ current_user.created_at.strftime('%B %d, %Y') }}</small>
             </div>
             <a href="{{ url_for('logout') }}" class="btn btn-danger">
                 <i class="bi bi-box-arrow-right me-2"></i>Logout
@@ -90,9 +366,9 @@
     </div>
 </div>
 
-<!-- Main Content -->
-<div class="container my-4">
-    <!-- Statistics -->
+<div class="container">
+
+    <!-- ── STAT CARDS ── -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
             <div class="stat-card">
@@ -121,9 +397,7 @@
                 <i class="bi bi-calendar-check fs-1 text-warning"></i>
                 <div class="stat-number">
                     {% set total_days = 0 %}
-                    {% for trip in saved_trips %}
-                        {% set total_days = total_days + trip.days %}
-                    {% endfor %}
+                    {% for trip in saved_trips %}{% set total_days = total_days + trip.days %}{% endfor %}
                     {{ total_days }}
                 </div>
                 <div class="text-muted">Total Days Planned</div>
@@ -131,93 +405,94 @@
         </div>
     </div>
 
-    <!-- Saved Trips Section -->
-    <div class="card shadow">
-        <div class="card-header bg-success text-white">
+    <!-- ── SAVED TRIPS TABLE ── -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-success">
             <h5 class="mb-0"><i class="bi bi-bookmark-star-fill me-2"></i>My Saved Trips</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             {% if saved_trips %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Destination</th>
-                                <th>Duration</th>
-                                <th>Budget</th>
-                                <th>Trip Type</th>
-                                <th>Saved On</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for trip in saved_trips %}
-                            <tr class="trip-card">
-                                <td>
-                                    <strong>{{ trip.destination|title }}</strong>
-                                </td>
-                                <td>{{ trip.days }} day{{ 's' if trip.days > 1 }}</td>
-                                <td>
-                                    <span class="badge {% if trip.budget == 'luxury' %}bg-warning{% elif trip.budget == 'budget' %}bg-info{% else %}bg-success{% endif %}">
-                                        {{ trip.budget|capitalize }}
-                                    </span>
-                                </td>
-                                <td>
-                                    {% if trip.trip_type == 'family' %}👨‍👩‍👧‍👦 Family
-                                    {% elif trip.trip_type == 'school' %}🏫 School
-                                    {% elif trip.trip_type == 'couple' %}💑 Couple
-                                    {% elif trip.trip_type == 'solo' %}🎒 Solo
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <small class="text-muted">
-                                        {{ trip.created_at.strftime('%d %b %Y') }}
-                                    </small>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ url_for('view_trip', trip_id=trip.id) }}" class="btn btn-outline-primary" title="View Trip">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <button class="btn btn-outline-danger" onclick="deleteTrip({{ trip.id }})" title="Delete Trip">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Destination</th>
+                            <th>Duration</th>
+                            <th>Budget</th>
+                            <th>Trip Type</th>
+                            <th>Saved On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trip in saved_trips %}
+                        <tr>
+                            <td><strong>{{ trip.destination|title }}</strong></td>
+                            <td>{{ trip.days }} day{{ 's' if trip.days > 1 }}</td>
+                            <td>
+                                <span class="badge
+                                    {% if trip.budget == 'luxury' %}bg-warning
+                                    {% elif trip.budget == 'budget' %}bg-info
+                                    {% else %}bg-success{% endif %}">
+                                    {{ trip.budget|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if trip.trip_type == 'family' %}👨‍👩‍👧‍👦 Family
+                                {% elif trip.trip_type == 'school' %}🏫 School
+                                {% elif trip.trip_type == 'couple' %}💑 Couple
+                                {% elif trip.trip_type == 'solo' %}🎒 Solo
+                                {% endif %}
+                            </td>
+                            <td><small class="text-muted">{{ trip.created_at.strftime('%d %b %Y') }}</small></td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('view_trip', trip_id=trip.id) }}"
+                                       class="btn btn-outline-primary" title="View Trip">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button class="btn btn-outline-danger"
+                                            onclick="deleteTrip({{ trip.id }})" title="Delete Trip">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
+            <div class="p-3">
                 <div class="empty-state">
                     <i class="bi bi-bookmark-star"></i>
                     <h5>No saved trips yet</h5>
-                    <p class="text-muted">Plan your first adventure and save it to see it here!</p>
-                    <a href="/" class="btn btn-primary mt-3">
+                    <p>Plan your first adventure and save it to see it here!</p>
+                    <a href="/" class="btn mt-3">
                         <i class="bi bi-search me-2"></i>Plan a Trip
                     </a>
                 </div>
+            </div>
             {% endif %}
         </div>
     </div>
 
-    <!-- Recent Activity (Optional) -->
+    <!-- ── RECENT ACTIVITY ── -->
     {% if saved_trips %}
-    <div class="card shadow mt-4">
-        <div class="card-header bg-info text-white">
+    <div class="card shadow mt-2">
+        <div class="card-header bg-info">
             <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Activity</h5>
         </div>
-        <div class="card-body">
-            <div class="list-group">
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
                 {% for trip in saved_trips[:5] %}
                 <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
                             <i class="bi bi-geo-alt-fill text-danger me-2"></i>
                             <strong>{{ trip.destination|title }}</strong>
                             <small class="text-muted ms-2">
-                                {{ trip.days }} days • {{ trip.budget }} • {{ trip.trip_type }}
+                                {{ trip.days }} days · {{ trip.budget }} · {{ trip.trip_type }}
                             </small>
                         </div>
                         <small class="text-muted">
@@ -230,58 +505,37 @@
         </div>
     </div>
     {% endif %}
-</div>
+
+</div><!-- /container -->
 
 <script>
-    function deleteTrip(tripId) {
-        if (!confirm('Are you sure you want to delete this trip? This action cannot be undone.')) {
-            return;
+function deleteTrip(tripId) {
+    if (!confirm('Delete this trip? This cannot be undone.')) return;
+
+    const row = event.target.closest('tr');
+    if (row) row.style.opacity = '0.45';
+
+    fetch(`/delete-trip/${tripId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            if (row) row.remove();
+            const tbody = document.querySelector('tbody');
+            if (!tbody || tbody.children.length === 0) location.reload();
+            else location.reload();
+            alert('✅ Trip deleted successfully');
+        } else {
+            alert('❌ Error: ' + (data.error || 'Failed to delete trip'));
+            if (row) row.style.opacity = '1';
         }
-        
-        const row = event.target.closest('tr');
-        if (row) {
-            row.style.opacity = '0.5';
-        }
-        
-        fetch(`/delete-trip/${tripId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                if (row) {
-                    row.remove();
-                }
-                
-                // Check if table is empty
-                const tbody = document.querySelector('tbody');
-                if (tbody && tbody.children.length === 0) {
-                    location.reload(); // Reload to show empty state
-                } else {
-                    // Update statistics
-                    location.reload();
-                }
-                
-                alert('✅ Trip deleted successfully');
-            } else {
-                alert('❌ Error: ' + (data.error || 'Failed to delete trip'));
-                if (row) {
-                    row.style.opacity = '1';
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error deleting trip. Please try again.');
-            if (row) {
-                row.style.opacity = '1';
-            }
-        });
-    }
-    
-    // Auto-refresh statistics after delete (handled by reload)
+    })
+    .catch(() => {
+        alert('Error deleting trip. Please try again.');
+        if (row) row.style.opacity = '1';
+    });
+}
 </script>
 {% endblock %}
