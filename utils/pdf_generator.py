@@ -1,94 +1,142 @@
 from fpdf import FPDF
 from datetime import datetime
+import textwrap
 
-def generate_itinerary_pdf(destination, days, budget, trip_type, itinerary, tips, events, gems):
-    """Generate simple text content for PDF"""
+class SimplePDF(FPDF):
+    def header(self):
+        self.set_font('helvetica', 'B', 16)
+        self.set_text_color(26, 58, 92)
+        self.cell(0, 10, 'Travel Advisor', 0, 1, 'C')
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('helvetica', 'I', 8)
+        self.set_text_color(128, 128, 128)
+        self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
+
+def generate_itinerary_pdf(destination, days, budget, trip_type, itinerary, tips, events, gems, packing_list, output_path):
+    """Generate a simple, reliable PDF - NO SPECIAL CHARACTERS"""
     
-    content = f"TRAVEL ITINERARY - {destination.upper()}\n"
-    content += f"Generated: {datetime.now().strftime('%B %d, %Y')}\n"
-    content += "=" * 50 + "\n\n"
+    pdf = SimplePDF()
+    pdf.add_page()
     
-    content += f"Trip Duration: {days} days\n"
-    content += f"Budget: {budget.capitalize()}\n"
-    content += f"Travel Type: {trip_type.capitalize()}\n\n"
+    # Helper function to add text safely
+    def add_text(text, indent=0):
+        if not text:
+            return
+        # Convert to string and remove any non-ASCII characters
+        safe_text = str(text).encode('ascii', 'ignore').decode('ascii')
+        # Wrap text
+        lines = textwrap.wrap(safe_text, width=70)
+        for line in lines:
+            if indent:
+                pdf.cell(indent)
+            pdf.cell(0, 5, line, 0, 1)
     
+    # Title
+    pdf.set_font('helvetica', 'B', 20)
+    safe_dest = str(destination).encode('ascii', 'ignore').decode('ascii').upper()
+    pdf.cell(0, 15, safe_dest, 0, 1, 'C')
+    
+    # Trip Info
+    pdf.set_font('helvetica', '', 12)
+    pdf.cell(0, 8, f"{days} Days | {budget} Budget | {trip_type} Trip", 0, 1, 'C')
+    pdf.cell(0, 6, f"Generated: {datetime.now().strftime('%B %d, %Y')}", 0, 1, 'C')
+    pdf.ln(10)
+    
+    # Travel Tips
     if tips:
-        content += "TRAVEL TIPS:\n"
-        for tip in tips:
-            content += f"- {tip}\n"
-        content += "\n"
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.cell(0, 10, 'TRAVEL TIPS', 0, 1)
+        pdf.set_font('helvetica', '', 11)
+        for tip in tips[:5]:
+            add_text("- " + tip, indent=5)
+        pdf.ln(5)
     
-    content += "DAY-BY-DAY ITINERARY:\n"
-    content += "-" * 50 + "\n"
+    # Itinerary
+    pdf.set_font('helvetica', 'B', 14)
+    pdf.cell(0, 10, 'ITINERARY', 0, 1)
     
     for day in itinerary:
-        content += f"\nDay {day.get('day', 'N/A')}:\n"
-        content += f"Morning: {day.get('morning', 'N/A')}\n"
-        content += f"Afternoon: {day.get('afternoon', 'N/A')}\n"
-        content += f"Evening: {day.get('evening', 'N/A')}\n"
-        content += f"Food: {day.get('food_suggestion', 'N/A')}\n"
-        content += f"Stay: {day.get('accommodation_tip', 'TBD')}\n"
+        pdf.set_font('helvetica', 'B', 12)
+        pdf.cell(0, 8, f"Day {day.get('day', '')}", 0, 1)
+        
+        pdf.set_font('helvetica', '', 11)
+        if day.get('morning'):
+            add_text("Morning: " + day.get('morning', ''), indent=5)
+        if day.get('afternoon'):
+            add_text("Afternoon: " + day.get('afternoon', ''), indent=5)
+        if day.get('evening'):
+            add_text("Evening: " + day.get('evening', ''), indent=5)
+        if day.get('food_suggestion'):
+            add_text("Food: " + day.get('food_suggestion', ''), indent=5)
+        if day.get('accommodation_tip'):
+            add_text("Stay: " + day.get('accommodation_tip', ''), indent=5)
+        pdf.ln(3)
     
+    # Local Events
     if events:
-        content += "\n\nLOCAL EVENTS:\n"
-        content += "-" * 50 + "\n"
-        for event in events:
-            content += f"\n{event.get('event', 'Event')}\n"
-            content += f"Location: {event.get('location', 'TBD')}\n"
-            content += f"Dates: {event.get('dates', 'TBD')}\n"
-            content += f"Type: {event.get('type', 'Event')}\n"
-    
-    if gems:
-        content += "\n\nHIDDEN GEMS:\n"
-        content += "-" * 50 + "\n"
-        for gem in gems:
-            content += f"\n{gem.get('name', 'Gem')}\n"
-            content += f"{gem.get('description', 'No description')}\n"
-            content += f"Best Time: {gem.get('best_time', 'Any')}\n"
-            content += f"Location: {gem.get('location', 'TBD')}\n"
-    
-    content += "\n\n" + "=" * 50 + "\n"
-    content += "Travel Advisor - Your Personal Trip Planner\n"
-    content += "© 2026 Travel Advisor\n"
-    
-    return content
-
-def create_pdf(content, output_path):
-    """Create simple PDF from text content"""
-    try:
-        print(f"📝 Creating PDF at: {output_path}")
-        
-        pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size=10)
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.cell(0, 10, 'LOCAL EVENTS', 0, 1)
         
-        # Set margins
-        pdf.set_left_margin(15)
-        pdf.set_right_margin(15)
-        pdf.set_top_margin(15)
+        pdf.set_font('helvetica', '', 11)
+        for event in events[:8]:
+            if event.get('event'):
+                add_text("- " + event.get('event', ''))
+            if event.get('location'):
+                add_text("  Location: " + event.get('location', ''), indent=5)
+            if event.get('dates'):
+                add_text("  Dates: " + event.get('dates', ''), indent=5)
+            pdf.ln(2)
+    
+    # Hidden Gems
+    if gems:
+        pdf.add_page()
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.cell(0, 10, 'HIDDEN GEMS', 0, 1)
         
-        # Add content line by line
-        lines = content.split('\n')
-        for line in lines:
-            # Remove special characters that fpdf might have trouble with
-            line = line.replace('•', '-').replace('℃', 'C')
-            
-            # Skip very long lines by truncating them
-            if len(line) > 180:
-                line = line[:177] + "..."
-            
-            try:
-                pdf.cell(0, 5, txt=line.encode('latin-1', 'ignore').decode('latin-1'), ln=True)
-            except:
-                # If even that fails, just skip the line
-                pass
+        pdf.set_font('helvetica', '', 11)
+        for gem in gems[:6]:
+            if gem.get('name'):
+                add_text("- " + gem.get('name', ''))
+            if gem.get('description'):
+                add_text("  " + gem.get('description', ''), indent=5)
+            if gem.get('best_time'):
+                add_text("  Best: " + gem.get('best_time', ''), indent=5)
+            if gem.get('location'):
+                add_text("  Location: " + gem.get('location', ''), indent=5)
+            pdf.ln(2)
+    
+    # Packing List
+    if packing_list:
+        pdf.add_page()
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.cell(0, 10, 'PACKING LIST', 0, 1)
         
+        for category, items in packing_list.items():
+            if items:
+                safe_cat = str(category).replace('_', ' ').title()
+                pdf.set_font('helvetica', 'B', 12)
+                pdf.cell(0, 8, safe_cat, 0, 1)
+                
+                pdf.set_font('helvetica', '', 11)
+                for item in items[:8]:
+                    clean_item = str(item).replace('✅', '').replace('✓', '').strip()
+                    add_text("- " + clean_item, indent=5)
+                pdf.ln(2)
+    
+    # Footer
+    pdf.ln(5)
+    pdf.set_font('helvetica', 'I', 9)
+    pdf.cell(0, 5, 'Plan your perfect journey with Travel Advisor', 0, 1, 'C')
+    
+    # Save
+    try:
         pdf.output(output_path)
-        print(f"✅ PDF created successfully at {output_path}")
+        print(f"✅ PDF saved: {output_path}")
         return True
-        
     except Exception as e:
-        print(f"❌ PDF creation error: {e}")
-        import traceback
-        traceback.print_exc()
-        raise e
+        print(f"❌ PDF error: {e}")
+        return False

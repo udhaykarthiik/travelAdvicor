@@ -4,20 +4,42 @@
 
 {% block extra_css %}
 <style>
+    /* Modern UI Enhancements */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #0b1e33 0%, #1a3a5c 100%);
+        --accent-gradient: linear-gradient(135deg, #e63946 0%, #c72a3f 100%);
+        --success-gradient: linear-gradient(135deg, #2d6a4f 0%, #1e4a3a 100%);
+        --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        --hover-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
     .destination-header {
-        background: linear-gradient(135deg, #0b1e33 0%, #1a3a5c 100%);
+        background: var(--primary-gradient);
         color: white;
-        padding: 2rem 0;
+        padding: 2.5rem 0;
         margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .destination-header::before {
+        content: '✈️';
+        position: absolute;
+        right: 10%;
+        top: 20%;
+        font-size: 8rem;
+        opacity: 0.1;
+        transform: rotate(15deg);
     }
     
     .trip-badge {
-        background: #e63946;
+        background: var(--accent-gradient);
         color: white;
-        padding: 0.5rem 1.5rem;
+        padding: 0.6rem 1.8rem;
         border-radius: 50px;
         display: inline-block;
         font-weight: 600;
+        box-shadow: 0 4px 12px rgba(230,57,70,0.3);
     }
     
     .info-bar {
@@ -33,6 +55,7 @@
         margin-right: 0.5rem;
         display: inline-block;
         font-size: 0.9rem;
+        backdrop-filter: blur(5px);
     }
     
     .emergency-bar {
@@ -45,33 +68,57 @@
     .weather-card {
         background: linear-gradient(135deg, #0b1e33 0%, #1a3a5c 100%);
         color: white;
-        border-radius: 10px;
-        padding: 1.5rem;
+        border-radius: 20px;
+        padding: 1.8rem;
         margin-bottom: 1.5rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .weather-card::before {
+        content: '☁️';
+        position: absolute;
+        right: 5%;
+        bottom: 5%;
+        font-size: 5rem;
+        opacity: 0.1;
     }
     
     .day-card {
         border-left: 4px solid #1a3a5c;
         background: white;
-        border-radius: 8px;
-        padding: 1rem;
+        border-radius: 16px;
+        padding: 1.2rem;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
     }
     
     .day-card:hover {
-        transform: translateX(5px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: translateX(8px) translateY(-2px);
+        box-shadow: var(--hover-shadow);
+    }
+    
+    .day-card::after {
+        content: '📅';
+        position: absolute;
+        right: 2%;
+        bottom: 5%;
+        font-size: 3rem;
+        opacity: 0.03;
     }
     
     .food-tag {
         background: #e8f5e9;
         color: #2d6a4f;
-        padding: 0.2rem 1rem;
+        padding: 0.3rem 1.2rem;
         border-radius: 50px;
         font-size: 0.8rem;
         font-weight: 600;
+        border: 1px solid #b7dfc9;
     }
     
     .attraction-tag {
@@ -90,6 +137,7 @@
         background: #2d6a4f;
         color: white;
         transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(45,106,79,0.3);
     }
     
     .food-tag-item {
@@ -108,26 +156,35 @@
         background: #c0392b;
         color: white;
         transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(192,57,43,0.3);
     }
     
     .tips-section {
-        background: #fff3cd;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe69b 100%);
         border: 1px solid #ffeeba;
-        border-radius: 8px;
-        padding: 1rem;
-        margin: 1rem 0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        box-shadow: var(--card-shadow);
     }
     
     .events-section, .gems-section {
         background: #f8f9fa;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-top: 1rem;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        box-shadow: var(--card-shadow);
     }
     
     .event-item, .gem-item {
         border-bottom: 1px solid #dee2e6;
-        padding: 0.8rem 0;
+        padding: 1rem 0;
+        transition: all 0.2s;
+    }
+    
+    .event-item:hover, .gem-item:hover {
+        background: rgba(230,57,70,0.02);
+        padding-left: 1rem;
     }
     
     .event-item:last-child, .gem-item:last-child {
@@ -137,34 +194,327 @@
     .budget-card {
         background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
         border: 1px solid #c3e6cb;
-        border-radius: 8px;
-        padding: 1rem;
-        margin: 1rem 0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        box-shadow: var(--card-shadow);
     }
     
     .pdf-btn {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        bottom: 30px;
+        right: 30px;
         z-index: 1000;
-        box-shadow: 0 4px 12px rgba(230,57,70,0.3);
+        background: var(--accent-gradient);
+        color: white;
+        border: none;
         border-radius: 50px;
-        padding: 0.8rem 1.5rem;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(230,57,70,0.4);
         transition: all 0.3s;
     }
     
     .pdf-btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(230,57,70,0.4);
+        transform: scale(1.05) translateY(-5px);
+        box-shadow: 0 12px 30px rgba(230,57,70,0.5);
     }
     
     .weather-detail {
         display: inline-block;
-        background: rgba(255,255,255,0.1);
-        padding: 0.3rem 0.8rem;
+        background: rgba(255,255,255,0.15);
+        padding: 0.4rem 1rem;
         border-radius: 50px;
         margin-right: 0.5rem;
         margin-bottom: 0.5rem;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .save-btn {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 8px 20px rgba(40,167,69,0.4);
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .save-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(40,167,69,0.5);
+    }
+    
+    /* Calendar Styles */
+    .calendar-card {
+        margin: 2rem 0;
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+    }
+    
+    .calendar-header {
+        background: var(--accent-gradient);
+        color: white;
+        padding: 1.2rem 1.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .calendar-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .calendar-header .btn {
+        background: white;
+        color: #e63946;
+        border: none;
+        border-radius: 50px;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .calendar-header .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .month-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        padding: 1.8rem;
+        background: #f8f9fa;
+    }
+    
+    .month-box {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 1.2rem 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    
+    .month-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        border-color: #e63946;
+    }
+    
+    .month-box.current {
+        background: #e63946;
+        color: white;
+        border-color: #e63946;
+    }
+    
+    .month-box.has-events {
+        position: relative;
+        border-bottom: 4px solid #e63946;
+    }
+    
+    .month-box.current.has-events {
+        border-bottom: 4px solid #ffd166;
+    }
+    
+    .month-box .month-name {
+        font-size: 1rem;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 0.3rem;
+    }
+    
+    .month-box .ev-count {
+        font-size: 0.7rem;
+        background: #e63946;
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 50px;
+        display: inline-block;
+    }
+    
+    .month-box.current .ev-count {
+        background: white;
+        color: #e63946;
+    }
+    
+    .month-event-list {
+        padding: 0 1.8rem 1.8rem;
+        background: #f8f9fa;
+    }
+    
+    .month-event-item {
+        background: white;
+        border-left: 4px solid #e63946;
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+    }
+    
+    .month-event-item:hover {
+        transform: translateX(8px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    
+    .event-badge {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    .ev-festival { background: #ffd700; color: #000; }
+    .ev-cultural { background: #17a2b8; color: white; }
+    .ev-religious { background: #e63946; color: white; }
+    .ev-sports { background: #28a745; color: white; }
+    .ev-food { background: #fd7e14; color: white; }
+    
+    /* Packing List Styles */
+    .packing-card {
+        margin: 2rem 0;
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+    }
+    
+    .packing-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1e4a3a 100%);
+        color: white;
+        padding: 1.2rem 1.8rem;
+    }
+    
+    .packing-header h5 {
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .packing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.2rem;
+        padding: 1.8rem;
+        background: #f8f9fa;
+    }
+    
+    .packing-category {
+        background: white;
+        border-radius: 16px;
+        padding: 1.2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        transition: all 0.3s;
+        border: 1px solid #e9ecef;
+    }
+    
+    .packing-category:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+        border-color: #2d6a4f;
+    }
+    
+    .category-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .category-title i {
+        font-size: 1.4rem;
+        color: #2d6a4f;
+    }
+    
+    .category-title h6 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a3a5c;
+    }
+    
+    .packing-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .packing-items li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+        border-bottom: 1px dashed #f0f2f5;
+        transition: all 0.2s;
+    }
+    
+    .packing-items li:hover {
+        background: #f8f9fa;
+        padding-left: 0.5rem;
+    }
+    
+    .packing-items li:last-child {
+        border-bottom: none;
+    }
+    
+    .packing-items li i {
+        color: #2d6a4f;
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+    
+    .packing-items li input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #2d6a4f;
+    }
+    
+    .packing-items li.checked {
+        text-decoration: line-through;
+        opacity: 0.7;
+        color: #6c757d;
+    }
+    
+    .packing-items li.checked i {
+        color: #28a745;
+    }
+    
+    .packing-progress {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .progress {
+        height: 10px;
+        border-radius: 10px;
+        background: #e9ecef;
+    }
+    
+    .progress-bar {
+        background: linear-gradient(90deg, #2d6a4f, #40916c);
+        border-radius: 10px;
+        transition: width 0.3s ease;
     }
     
     @media (max-width: 768px) {
@@ -172,6 +522,21 @@
             position: static;
             width: 100%;
             margin-top: 1rem;
+            border-radius: 50px;
+        }
+        
+        .month-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .packing-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .month-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 </style>
@@ -183,8 +548,8 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div>
-                <h1 class="mb-1">{{ destination|title }}</h1>
-                <p class="mb-0">Your personalized {{ days }}-day itinerary</p>
+                <h1 class="mb-2 display-5 fw-bold">{{ destination|title }}</h1>
+                <p class="mb-0 opacity-90">Your personalized {{ days }}-day itinerary</p>
             </div>
             <div class="trip-badge mt-2 mt-sm-0">
                 {% if trip_type == 'family' %}👨‍👩‍👧‍👦 Family
@@ -222,15 +587,142 @@
     </div>
 </div>
 
+<!-- Weather Display -->
+{% if weather_data %}
+<div class="weather-card mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-3"><i class="bi {{ weather_icon }} me-2"></i>Weather in {{ weather_data.city }}</h5>
+            <div class="d-flex flex-wrap">
+                <span class="weather-detail">🌡️ {{ weather_data.temperature }}°C</span>
+                <span class="weather-detail">🤔 Feels {{ weather_data.feels_like }}°C</span>
+                <span class="weather-detail">💧 {{ weather_data.humidity }}%</span>
+                <span class="weather-detail">🌬️ {{ weather_data.description }}</span>
+            </div>
+        </div>
+        <div class="display-3 fw-bold">{{ weather_data.temperature }}°</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Festival Calendar Section -->
+<div class="calendar-card">
+    <div class="calendar-header">
+        <h5><i class="bi bi-calendar-range-fill me-2"></i>Festival Calendar 2026 - {{ destination|title }}</h5>
+        <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#fullCalendar">
+            <i class="bi bi-calendar-plus me-1"></i>Full View
+        </button>
+    </div>
+    <div class="card-body p-0">
+        {% set months = [
+            ('JAN', 'January'), ('FEB', 'February'), ('MAR', 'March'), ('APR', 'April'),
+            ('MAY', 'May'), ('JUN', 'June'), ('JUL', 'July'), ('AUG', 'August'),
+            ('SEP', 'September'), ('OCT', 'October'), ('NOV', 'November'), ('DEC', 'December')
+        ] %}
+        
+        <!-- Month Grid -->
+        <div class="month-grid">
+            {% for month_short, month_full in months %}
+                {% set month_events = events|selectattr('month', 'equalto', month_full.lower())|list %}
+                <div class="month-box {% if month_full.lower() == current_month.lower() %}current{% endif %} {% if month_events|length > 0 %}has-events{% endif %}"
+                    onclick="showMonthEvents('{{ month_full }}')"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#month{{ month_full }}Events">
+                    <span class="month-name">{{ month_short }}</span>
+                    {% if month_events|length > 0 %}
+                        <span class="ev-count">{{ month_events|length }}</span>
+                    {% else %}
+                        <span class="ev-count" style="opacity:0.3;">0</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Event Lists by Month -->
+        {% for month_short, month_full in months %}
+            {% set month_events = events|selectattr('month', 'equalto', month_full.lower())|list %}
+            {% if month_events %}
+            <div class="collapse month-event-list" id="month{{ month_full }}Events">
+                <h6 class="text-danger mb-3">
+                    <i class="bi bi-calendar-event-fill me-2"></i>
+                    {{ month_full }} Events in {{ destination|title }}
+                </h6>
+                {% for event in month_events %}
+                <div class="month-event-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>{{ event.event }}</strong>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ event.location }}
+                                {% if event.dates %} | <i class="bi bi-calendar me-1"></i>{{ event.dates }}{% endif %}
+                            </div>
+                        </div>
+                        <span class="event-badge 
+                            {% if 'festival' in (event.type|lower) %}ev-festival
+                            {% elif 'cultural' in (event.type|lower) %}ev-cultural
+                            {% elif 'religious' in (event.type|lower) %}ev-religious
+                            {% elif 'sports' in (event.type|lower) %}ev-sports
+                            {% elif 'food' in (event.type|lower) %}ev-food
+                            {% else %}bg-secondary text-white{% endif %}">
+                            {{ event.type }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+        
+        <!-- Full Calendar View -->
+        <div class="collapse" id="fullCalendar">
+            <div class="full-calendar-view p-4 bg-light">
+                <h6 class="text-danger mb-4">
+                    <i class="bi bi-calendar2-range-fill me-2"></i>
+                    Complete Festival Calendar 2026 - {{ destination|title }}
+                </h6>
+                <div class="row">
+                    {% for month_short, month_full in months %}
+                        {% set month_events = events|selectattr('month', 'equalto', month_full.lower())|list %}
+                        {% if month_events %}
+                        <div class="col-md-6 mb-3">
+                            <div class="full-cal-month bg-white p-3 rounded-3 shadow-sm">
+                                <h6 class="text-primary mb-3"><i class="bi bi-calendar-check me-2 text-danger"></i>{{ month_full }}</h6>
+                                {% for event in month_events %}
+                                <div class="full-cal-event mb-2 pb-2 border-bottom">
+                                    <i class="bi bi-star-fill text-warning me-2"></i>
+                                    <strong>{{ event.event }}</strong>
+                                    <span class="badge 
+                                        {% if 'festival' in (event.type|lower) %}bg-warning text-dark
+                                        {% elif 'cultural' in (event.type|lower) %}bg-info
+                                        {% elif 'religious' in (event.type|lower) %}bg-danger
+                                        {% elif 'sports' in (event.type|lower) %}bg-success
+                                        {% else %}bg-secondary{% endif %} 
+                                        ms-2">{{ event.type }}</span>
+                                    <div class="small text-muted mt-1">
+                                        📍 {{ event.location }}
+                                        {% if event.dates %} | 📅 {{ event.dates }}{% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Main Content -->
 <div class="container my-4">
     <!-- Travel Tips Section -->
     {% if tips and tips|length > 0 %}
     <div class="tips-section">
-        <h5><i class="bi bi-lightbulb-fill text-warning me-2"></i>✨ Travel Tips for {{ destination|title }}</h5>
-        <ul class="mb-0">
+        <h5 class="mb-3"><i class="bi bi-lightbulb-fill text-warning me-2"></i>✨ Pro Travel Tips for {{ destination|title }}</h5>
+        <ul class="mb-0 list-unstyled">
             {% for tip in tips %}
-            <li>{{ tip }}</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>{{ tip }}</li>
             {% endfor %}
         </ul>
     </div>
@@ -238,68 +730,68 @@
 
     <!-- Budget Calculator -->
     <div class="budget-card">
-        <h5><i class="bi bi-calculator-fill me-2 text-success"></i>Quick Budget Estimate (per person)</h5>
+        <h5 class="mb-3"><i class="bi bi-calculator-fill me-2 text-success"></i>Quick Budget Estimate (per person)</h5>
         <div class="row text-center">
             <div class="col-6 col-md-3 mb-2">
-                <div class="bg-white p-2 rounded">
+                <div class="bg-white p-3 rounded-3 shadow-sm">
                     <small class="text-muted">🏨 Hotel</small>
-                    <strong class="d-block">₹{{ days * (4000 if budget=='luxury' else 2000 if budget=='medium' else 1200) }}</strong>
+                    <strong class="d-block fs-5">₹{{ days * (4000 if budget=='luxury' else 2000 if budget=='medium' else 1200) }}</strong>
                 </div>
             </div>
             <div class="col-6 col-md-3 mb-2">
-                <div class="bg-white p-2 rounded">
+                <div class="bg-white p-3 rounded-3 shadow-sm">
                     <small class="text-muted">🍽️ Food</small>
-                    <strong class="d-block">₹{{ days * (2500 if budget=='luxury' else 1200 if budget=='medium' else 600) }}</strong>
+                    <strong class="d-block fs-5">₹{{ days * (2500 if budget=='luxury' else 1200 if budget=='medium' else 600) }}</strong>
                 </div>
             </div>
             <div class="col-6 col-md-3 mb-2">
-                <div class="bg-white p-2 rounded">
+                <div class="bg-white p-3 rounded-3 shadow-sm">
                     <small class="text-muted">🎟️ Activities</small>
-                    <strong class="d-block">₹{{ days * (3000 if budget=='luxury' else 1500 if budget=='medium' else 800) }}</strong>
+                    <strong class="d-block fs-5">₹{{ days * (3000 if budget=='luxury' else 1500 if budget=='medium' else 800) }}</strong>
                 </div>
             </div>
             <div class="col-6 col-md-3 mb-2">
-                <div class="bg-white p-2 rounded border border-success">
+                <div class="bg-white p-3 rounded-3 shadow-sm border border-success">
                     <small class="text-success">💰 Total</small>
-                    <strong class="d-block text-success">₹{{ days * (9500 if budget=='luxury' else 4700 if budget=='medium' else 2600) }}+</strong>
+                    <strong class="d-block fs-5 text-success">₹{{ days * (9500 if budget=='luxury' else 4700 if budget=='medium' else 2600) }}+</strong>
                 </div>
             </div>
         </div>
-        <small class="text-muted d-block mt-2">*Excludes flight/travel to destination</small>
+        <small class="text-muted d-block mt-3">*Excludes flight/travel to destination</small>
     </div>
 
     <!-- Itinerary -->
-    <h3 class="mb-3">Your {{ days }}-Day Itinerary</h3>
+    <h3 class="mb-4">Your {{ days }}-Day Itinerary</h3>
     
     {% if itinerary and itinerary|length > 0 %}
         {% for day in itinerary %}
         <div class="day-card">
-            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                 <h5 class="mb-0 text-primary">Day {{ day.day }}</h5>
                 <span class="food-tag mt-1 mt-sm-0"><i class="bi bi-egg-fried me-1"></i>{{ day.food_suggestion }}</span>
             </div>
-            <div class="row">
-                <div class="col-md-4 mb-2 mb-md-0">
-                    <div class="bg-light p-2 rounded">
-                        <small class="text-muted d-block">🌅 Morning</small>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="bg-light p-3 rounded-3 h-100">
+                        <small class="text-muted d-block mb-2">🌅 Morning</small>
                         <strong>{{ day.morning }}</strong>
                     </div>
                 </div>
-                <div class="col-md-4 mb-2 mb-md-0">
-                    <div class="bg-light p-2 rounded">
-                        <small class="text-muted d-block">☀️ Afternoon</small>
+                <div class="col-md-4">
+                    <div class="bg-light p-3 rounded-3 h-100">
+                        <small class="text-muted d-block mb-2">☀️ Afternoon</small>
                         <strong>{{ day.afternoon }}</strong>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="bg-light p-2 rounded">
-                        <small class="text-muted d-block">🌙 Evening</small>
+                    <div class="bg-light p-3 rounded-3 h-100">
+                        <small class="text-muted d-block mb-2">🌙 Evening</small>
                         <strong>{{ day.evening }}</strong>
                     </div>
                 </div>
             </div>
             {% if day.accommodation_tip %}
-            <div class="mt-2 small text-muted">
+            <div class="mt-3 small text-muted bg-white p-2 rounded-3">
                 <i class="bi bi-house-door me-1"></i>{{ day.accommodation_tip }}
             </div>
             {% endif %}
@@ -309,41 +801,85 @@
         <div class="alert alert-warning">No itinerary available. Please try again.</div>
     {% endif %}
 
-    <!-- Local Events Section -->
-    {% if events and events|length > 0 %}
-    <div class="events-section">
-        <h5><i class="bi bi-calendar-event-fill text-danger me-2"></i>🎪 Local Events in {{ destination|title }}</h5>
-        {% for event in events %}
-        <div class="event-item">
-            <strong>{{ event.event }}</strong><br>
-            <small class="text-muted">
-                📍 {{ event.location }} | 📅 {{ event.dates }} | 🏷️ {{ event.type }}
-            </small>
+    <!-- Hidden Gems Section -->
+    {% if gems and gems|length > 0 %}
+    <div class="gems-section">
+        <h5 class="mb-3"><i class="bi bi-gem text-warning me-2"></i>💎 Hidden Gems in {{ destination|title }}</h5>
+        {% for gem in gems %}
+        <div class="gem-item">
+            <strong class="fs-6">{{ gem.name }}</strong><br>
+            <small class="text-muted">{{ gem.description }}</small><br>
+            <small class="text-muted">⏰ Best time: {{ gem.best_time }} | 📍 {{ gem.location }}</small>
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <!-- Hidden Gems Section -->
-    {% if gems and gems|length > 0 %}
-    <div class="gems-section">
-        <h5><i class="bi bi-gem text-warning me-2"></i>💎 Hidden Gems in {{ destination|title }}</h5>
-        {% for gem in gems %}
-        <div class="gem-item">
-            <strong>{{ gem.name }}</strong><br>
-            <small class="text-muted">{{ gem.description }}</small><br>
-            <small>⏰ Best time: {{ gem.best_time }} | 📍 {{ gem.location }}</small>
+    <!-- Packing List Section -->
+    <div class="packing-card">
+        <div class="packing-header">
+            <h5 class="mb-0"><i class="bi bi-suitcase-lg me-2"></i>Smart Packing List for {{ destination|title }}</h5>
+            <small class="d-block mt-1 opacity-75">✓ Check items as you pack • {{ days }}-day trip</small>
         </div>
-        {% endfor %}
+        <div class="card-body p-0">
+            <div class="packing-grid" id="packingGrid">
+                {% if packing_list %}
+                    {% for category, items in packing_list.items() %}
+                    <div class="packing-category" data-category="{{ category }}">
+                        <div class="category-title">
+                            {% if category == 'essentials' %}<i class="bi bi-passport-fill"></i>
+                            {% elif category == 'clothing' %}<i class="bi bi-shirt-fill"></i>
+                            {% elif category == 'weather_specific' %}<i class="bi bi-cloud-sun-fill"></i>
+                            {% elif category == 'activities' %}<i class="bi bi-bicycle"></i>
+                            {% elif category == 'toiletries' %}<i class="bi bi-droplet-fill"></i>
+                            {% elif category == 'medications' %}<i class="bi bi-capsule-fill"></i>
+                            {% elif category == 'electronics' %}<i class="bi bi-phone-fill"></i>
+                            {% elif category == 'miscellaneous' %}<i class="bi bi-backpack-fill"></i>
+                            {% else %}<i class="bi bi-check-circle-fill"></i>
+                            {% endif %}
+                            <h6>{{ category|replace('_', ' ')|title }}</h6>
+                        </div>
+                        <ul class="packing-items" id="list-{{ category }}">
+                            {% for item in items %}
+                            <li class="packing-item" onclick="toggleItem(this)">
+                                <i class="bi bi-circle"></i>
+                                <span>{{ item|replace('✅ ', '') }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted">Packing list not available.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Packing Progress -->
+           
+            <div class="packing-progress mx-3 mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small text-muted">Packing Progress</span>
+                    {% set total_items = 0 %}
+                    {% for category, items in packing_list.items() %}
+                        {% set total_items = total_items + items|length %}
+                    {% endfor %}
+                    <span class="small fw-bold" id="packingCount">0/{{ total_items }} items</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" id="packingProgress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endif %}
 
     <!-- Attractions & Food from Itinerary -->
     <div class="row mt-4">
         <div class="col-md-6 mb-3 mb-md-0">
-            <div class="card h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">📍 Top Attractions</h5>
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-success text-white border-0">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt-fill me-2"></i>📍 Top Attractions</h5>
                 </div>
                 <div class="card-body">
                     {% set attractions = [] %}
@@ -360,9 +896,11 @@
                     {% endfor %}
                     
                     {% if attractions and attractions|length > 0 %}
-                        {% for a in attractions[:8] %}
-                        <span class="attraction-tag">{{ a }}</span>
-                        {% endfor %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for a in attractions[:8] %}
+                            <span class="attraction-tag">{{ a }}</span>
+                            {% endfor %}
+                        </div>
                     {% else %}
                         <p class="text-muted">No attractions listed.</p>
                     {% endif %}
@@ -370,9 +908,9 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">🍽️ Local Food</h5>
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-danger text-white border-0">
+                    <h5 class="mb-0"><i class="bi bi-cup-hot-fill me-2"></i>🍽️ Local Food</h5>
                 </div>
                 <div class="card-body">
                     {% set foods = [] %}
@@ -383,9 +921,11 @@
                     {% endfor %}
                     
                     {% if foods and foods|length > 0 %}
-                        {% for f in foods %}
-                        <span class="food-tag-item">{{ f }}</span>
-                        {% endfor %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for f in foods %}
+                            <span class="food-tag-item">{{ f }}</span>
+                            {% endfor %}
+                        </div>
                     {% else %}
                         <p class="text-muted">No food items listed.</p>
                     {% endif %}
@@ -395,21 +935,124 @@
     </div>
 
     <!-- PDF Download Button -->
-    <div class="text-center mt-4 mb-5">
+    <div class="text-center mt-4">
         <button class="btn btn-danger btn-lg pdf-btn" onclick="downloadPDF()">
             <i class="bi bi-file-pdf-fill me-2"></i>Download Itinerary as PDF
         </button>
     </div>
+
+    <!-- Save Trip Button - Only for logged in users -->
+    {% if current_user.is_authenticated %}
+    <div class="text-center mt-3">
+        <button class="save-btn" onclick="saveTrip()">
+            <i class="bi bi-bookmark-star-fill me-2"></i>Save This Itinerary
+        </button>
+    </div>
+    {% else %}
+    <div class="text-center mt-3">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            <a href="{{ url_for('login') }}" class="alert-link">Sign in</a> to save this itinerary to your profile!
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <script type="text/javascript">
+    // Packing List Interactive Functions
+    function toggleItem(element) {
+        element.classList.toggle('checked');
+        const icon = element.querySelector('i');
+        if (element.classList.contains('checked')) {
+            icon.className = 'bi bi-check-circle-fill text-success';
+        } else {
+            icon.className = 'bi bi-circle';
+        }
+        updatePackingProgress();
+    }
+    
+    function updatePackingProgress() {
+    const allItems = document.querySelectorAll('.packing-item');
+    const checkedItems = document.querySelectorAll('.packing-item.checked');
+    const totalItems = allItems.length;
+    const checkedCount = checkedItems.length;
+    
+    document.getElementById('packingCount').textContent = `${checkedCount}/${totalItems} items`;
+    
+    const progressPercent = totalItems > 0 ? (checkedCount / totalItems) * 100 : 0;
+    document.getElementById('packingProgress').style.width = progressPercent + '%';
+    
+    // Save progress to localStorage
+    const destination = '{{ destination }}';
+    const savedProgress = {};
+    document.querySelectorAll('.packing-category').forEach(cat => {
+        const category = cat.dataset.category;
+        const items = [];
+        cat.querySelectorAll('.packing-item').forEach(item => {
+            items.push({
+                text: item.querySelector('span').textContent,
+                checked: item.classList.contains('checked')
+            });
+        });
+        savedProgress[category] = items;
+    });
+    localStorage.setItem(`packing_${destination}`, JSON.stringify(savedProgress));
+}
+    
+    // Load saved packing progress from localStorage
+    function loadPackingProgress() {
+        const destination = '{{ destination }}';
+        const saved = localStorage.getItem(`packing_${destination}`);
+        if (saved) {
+            try {
+                const savedProgress = JSON.parse(saved);
+                Object.keys(savedProgress).forEach(category => {
+                    const catElement = document.querySelector(`[data-category="${category}"]`);
+                    if (catElement) {
+                        const items = catElement.querySelectorAll('.packing-item');
+                        savedProgress[category].forEach((savedItem, index) => {
+                            if (items[index] && savedItem.checked) {
+                                items[index].classList.add('checked');
+                                items[index].querySelector('i').className = 'bi bi-check-circle-fill text-success';
+                            }
+                        });
+                    }
+                });
+                updatePackingProgress();
+            } catch (e) {
+                console.log('No saved progress found');
+            }
+        }
+    }
+    
+    // Calendar Functions
+    function showMonthEvents(month) {
+        var months = ['January', 'February', 'March', 'April', 'May', 'June',
+                     'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        months.forEach(function(m) {
+            var el = document.getElementById('month' + m + 'Events');
+            if (el && el.classList.contains('show')) {
+                bootstrap.Collapse.getOrCreateInstance(el).hide();
+            }
+        });
+        
+        var sel = document.getElementById('month' + month + 'Events');
+        if (sel) {
+            bootstrap.Collapse.getOrCreateInstance(sel).show();
+            setTimeout(() => {
+                sel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 200);
+        }
+    }
+    
+    // PDF Download Function
     function downloadPDF() {
         const btn = event.target.closest('button');
         const originalText = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Generating PDF...';
         
-        // Get data from template
         const data = {
             destination: '{{ destination }}',
             days: {{ days }},
@@ -418,10 +1061,9 @@
             itinerary: {{ itinerary|tojson }},
             tips: {{ tips|tojson }},
             events: {{ events|tojson }},
-            gems: {{ gems|tojson }}
+            gems: {{ gems|tojson }},
+            packing_list: {{ packing_list|tojson }}
         };
-        
-        console.log('Sending PDF request for:', data.destination);
         
         fetch('/download-pdf', {
             method: 'POST',
@@ -429,55 +1071,79 @@
             body: JSON.stringify(data)
         })
         .then(response => {
-            console.log('Response status:', response.status);
-            
             if (!response.ok) {
                 return response.json().then(err => {
-                    throw new Error(err.error || `HTTP ${response.status}: ${response.statusText}`);
-                }).catch(() => {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(err.error || `HTTP ${response.status}`);
                 });
             }
-            
-            // Check if response is PDF
-            const contentType = response.headers.get('Content-Type');
-            if (!contentType || !contentType.includes('application/pdf')) {
-                throw new Error('Invalid response format received from server');
-            }
-            
             return response.blob();
         })
         .then(blob => {
-            if (!blob || blob.size === 0) {
-                throw new Error('Received empty PDF file');
-            }
-            
-            console.log('PDF blob received, size:', blob.size);
-            
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
             link.download = '{{ destination }}_itinerary.pdf';
             document.body.appendChild(link);
             link.click();
-            
-            setTimeout(() => {
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            }, 100);
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
             
             btn.disabled = false;
             btn.innerHTML = originalText;
-            console.log('✅ PDF download started');
         })
         .catch(error => {
             console.error('❌ PDF Error:', error);
             btn.disabled = false;
             btn.innerHTML = originalText;
-            
-            const errorMessage = error.message || 'Failed to download PDF. Please check your internet connection and try again.';
-            alert('Error: ' + errorMessage + '\n\nCheck browser console for more details.');
+            alert('Error: ' + error.message);
         });
     }
+    
+    // Save Trip Function
+    function saveTrip() {
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Saving...';
+        
+        const data = {
+            destination: '{{ destination }}',
+            days: {{ days }},
+            budget: '{{ budget }}',
+            trip_type: '{{ trip_type }}',
+            itinerary: {{ itinerary|tojson }},
+            tips: {{ tips|tojson }},
+            events: {{ events|tojson }},
+            gems: {{ gems|tojson }},
+            packing_list: {{ packing_list|tojson }}
+        };
+        
+        fetch('/save-trip', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ Trip saved successfully! View it in your profile.');
+            } else {
+                alert('❌ Error: ' + (data.error || 'Unknown error'));
+            }
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            alert('Error saving trip. Please try again.');
+        });
+    }
+    
+    // Load packing progress on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadPackingProgress();
+    });
 </script>
 {% endblock %}
