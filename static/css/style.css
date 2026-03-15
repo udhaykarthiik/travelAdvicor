@@ -1,0 +1,187 @@
+/* Global Styles */
+:root {
+    --primary-dark: #0b1e33;
+    --primary-medium: #1a3a5c;
+    --accent-red: #e63946;
+    --accent-gold: #ffd166;
+    --success-green: #2d6a4f;
+    --light-bg: #f8fafc;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar Styles */
+.navbar-custom {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white !important;
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand i {
+    color: var(--accent-gold);
+    margin-right: 8px;
+}
+
+.nav-btn {
+    border-radius: 50px;
+    padding: 0.4rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Footer */
+.footer-custom {
+    background: var(--primary-dark);
+    color: rgba(255,255,255,0.8);
+    padding: 1.5rem 0;
+    margin-top: auto;
+    border-top: 3px solid var(--accent-red);
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Forms */
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent-red);
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+}
+
+/* Trip Type Options */
+.trip-type-option {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.8rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.trip-type-option:hover {
+    border-color: var(--accent-red);
+    background: #fff5f5;
+}
+
+.trip-type-option.selected {
+    border-color: var(--accent-red);
+    background: #fff0f0;
+}
+
+.trip-type-option input[type="radio"] {
+    display: none;
+}
+
+/* Badges */
+.dest-badge {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 50px;
+    padding: 0.4rem 1.2rem;
+    margin: 0 0.3rem 0.3rem 0;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dest-badge:hover {
+    background: var(--accent-red);
+    color: white;
+    border-color: var(--accent-red);
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--accent-red) 0%, #c72a3f 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+}
+
+/* Loading Spinner */
+.spinner-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+}
+
+.spinner-wrapper.show {
+    display: flex;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--accent-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}

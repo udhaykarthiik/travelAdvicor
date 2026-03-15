@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Plan Your Trip{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h3>Plan Your Perfect Trip</h3>
+            </div>
+            <div class="card-body">
+                <form action="/search" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Destination</label>
+                        <input type="text" name="destination" class="form-control" 
+                               placeholder="e.g., Kerala, Delhi, Manali" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Days</label>
+                            <input type="number" name="days" class="form-control" 
+                                   min="1" max="14" value="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Budget</label>
+                            <select name="budget" class="form-control">
+                                <option value="budget">💰 Budget</option>
+                                <option value="medium" selected>💵 Medium</option>
+                                <option value="luxury">✨ Luxury</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Trip Type</label>
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="form-check">
+                                    <input type="radio" name="trip_type" value="family" checked>
+                                    <label>👨‍👩‍👧‍👦 Family</label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-check">
+                                    <input type="radio" name="trip_type" value="school">
+                                    <label>🏫 School</label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-check">
+                                    <input type="radio" name="trip_type" value="couple">
+                                    <label>💑 Couple</label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-check">
+                                    <input type="radio" name="trip_type" value="solo">
+                                    <label>🎒 Solo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        Plan My Trip
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
