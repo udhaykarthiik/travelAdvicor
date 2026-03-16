@@ -800,17 +800,22 @@ with app.app_context():
     print("✅ Database tables created")
 
 if __name__ == '__main__':
+    # Get port from environment (Render provides this) or use 5000 locally
+    port = int(os.environ.get('PORT', 5000))
+    
     print("\n" + "="*70)
     print("🚀 Travel Advisor Starting...")
     print("="*70)
-    print("🤖 Using Groq API as primary")
-    print("🔐 User authentication enabled")
-    print("📁 SQLite database: users.db")
-    print("🌤️  Weather API: Connected")
-    print("📄 PDF generation: Ready")
-    print("📅 Festival Calendar: Ready")
-    print("🎒 Packing List Generator: Ready")
-    print("📅 Booking Feature: Ready")
-    print("🌐 http://127.0.0.1:5000")
+    print(f"🤖 Using Groq API as primary")
+    print(f"🔐 User authentication enabled")
+    print(f"📁 SQLite database: users.db")
+    print(f"🌤️  Weather API: Connected")
+    print(f"📄 PDF generation: Ready")
+    print(f"📅 Festival Calendar: Ready")
+    print(f"🎒 Packing List Generator: Ready")
+    print(f"📅 Booking Feature: Ready")
+    print(f"🌐 Local: http://127.0.0.1:{port}")
+    print(f"🌐 Render: Using $PORT environment variable")
     print("="*70 + "\n")
-    app.run(debug=True)
+    
+    app.run(host='0.0.0.0', port=port, debug=False) 
