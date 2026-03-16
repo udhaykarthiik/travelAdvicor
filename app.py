@@ -716,18 +716,23 @@ with app.app_context():
     db.create_all()
     print("✅ Database tables created")
 
-if __name__ == '__main__':
-    print("\n" + "="*70)
-    print("🚀 Travel Advisor Starting...")
-    print("="*70)
-    print("🤖 Using Groq API as primary")
-    print("🔐 User authentication enabled")
-    print("📁 SQLite database: users.db")
-    print("🌤️  Weather API: Connected")
-    print("📄 PDF generation: Ready")
-    print("📅 Festival Calendar: Ready")
-    print("🎒 Packing List Generator: Ready")
-    print("🌐 http://127.0.0.1:5000")
-    print("="*70 + "\n")
-    app.run(debug=True)
-    app = app
+# if __name__ == '__main__':
+#     print("\n" + "="*70)
+#     print("🚀 Travel Advisor Starting...")
+#     print("="*70)
+#     print("🤖 Using Groq API as primary")
+#     print("🔐 User authentication enabled")
+#     print("📁 SQLite database: users.db")
+#     print("🌤️  Weather API: Connected")
+#     print("📄 PDF generation: Ready")
+#     print("📅 Festival Calendar: Ready")
+#     print("🎒 Packing List Generator: Ready")
+#     print("🌐 http://127.0.0.1:5000")
+#     print("="*70 + "\n")
+#     app.run(debug=True)
+#     app = app
+
+# At the very bottom of app.py - ADD THIS
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # Render gives us a PORT
+    app.run(host="0.0.0.0", port=port, debug=False)  # debug=False for production
