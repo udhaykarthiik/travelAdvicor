@@ -10,7 +10,7 @@ from utils.weather import get_weather, get_weather_icon
 import logging
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, SavedTrip
+from models import db, User, SavedTrip, Booking  # Make sure Booking is imported
 from datetime import datetime
 
 # Load environment variables
@@ -34,17 +34,7 @@ login_manager.login_message_category = 'info'
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Groq client
-# Initialize Groq client with error handling
-try:
-    groq_client = Groq(api_key=os.getenv('GROQ_API_KEY'))
-    print("✅ Groq client initialized successfully")
-except TypeError as e:
-    print(f"⚠️ Groq client initialization error: {e}")
-    print("⚠️ Using fallback mode (no Groq API)")
-    groq_client = None
-except Exception as e:
-    print(f"⚠️ Unexpected error initializing Groq: {e}")
-    groq_client = None
+groq_client = Groq(api_key=os.getenv('GROQ_API_KEY'))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -711,28 +701,116 @@ def about():
     """About page"""
     return render_template('about.html')
 
+# ============================================================
+# BOOKING FEATURE ROUTES
+# ============================================================
+
+@app.route('/book/<destination>', methods=['GET', 'POST'])
+@login_required
+def book_destination(destination):
+    """Book a trip to a destination"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            check_in = request.form.get('check_in')
+            check_out = request.form.get('check_out')
+            guests = int(request.form.get('guests', 1))
+            
+            # Validate dates
+            if not check_in or not check_out:
+                flash('Please select both check-in and check-out dates')
+                return redirect(url_for('book_destination', destination=destination))
+            
+            # Calculate number of days
+            check_in_date = datetime.strptime(check_in, '%Y-%m-%d')
+            check_out_date = datetime.strptime(check_out, '%Y-%m-%d')
+            days = (check_out_date - check_in_date).days
+            
+            if days <= 0:
+                flash('Check-out date must be after check-in date')
+                return redirect(url_for('book_destination', destination=destination))
+            
+            # Calculate price (simple calculation for demo)
+            base_price_per_night = 3500
+            total_price = base_price_per_night * days * guests
+            
+            # Create new booking
+            new_booking = Booking(
+                user_id=current_user.id,
+                destination=destination,
+                check_in=check_in,
+                check_out=check_out,
+                guests=guests,
+                total_price=total_price,
+                status='confirmed'
+            )
+            
+            db.session.add(new_booking)
+            db.session.commit()
+            
+            flash('✅ Booking confirmed successfully!')
+            return redirect(url_for('my_bookings'))
+            
+        except Exception as e:
+            print(f"Booking error: {e}")
+            flash('❌ Error processing booking. Please try again.')
+            return redirect(url_for('book_destination', destination=destination))
+    
+    # GET request - show booking form
+    days = request.args.get('days', 3)
+    trip_type = request.args.get('trip_type', 'family')
+    
+    return render_template('booking.html', 
+                         destination=destination,
+                         days=days,
+                         trip_type=trip_type,
+                         now=datetime.now().strftime('%Y-%m-%d'))
+
+@app.route('/my-bookings')
+@login_required
+def my_bookings():
+    """Show user's booking history"""
+    bookings = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.created_at.desc()).all()
+    return render_template('booking.html', bookings=bookings)
+
+@app.route('/cancel-booking/<int:booking_id>', methods=['POST'])
+@login_required
+def cancel_booking(booking_id):
+    """Cancel a booking"""
+    booking = Booking.query.get_or_404(booking_id)
+    
+    # Check if booking belongs to current user
+    if booking.user_id != current_user.id:
+        flash('❌ You do not have permission to cancel this booking')
+        return redirect(url_for('my_bookings'))
+    
+    booking.status = 'cancelled'
+    db.session.commit()
+    
+    flash('✅ Booking cancelled successfully')
+    return redirect(url_for('my_bookings'))
+
+# ============================================================
+# END OF BOOKING ROUTES
+# ============================================================
+
 # Create database tables
 with app.app_context():
     db.create_all()
     print("✅ Database tables created")
 
-# if __name__ == '__main__':
-#     print("\n" + "="*70)
-#     print("🚀 Travel Advisor Starting...")
-#     print("="*70)
-#     print("🤖 Using Groq API as primary")
-#     print("🔐 User authentication enabled")
-#     print("📁 SQLite database: users.db")
-#     print("🌤️  Weather API: Connected")
-#     print("📄 PDF generation: Ready")
-#     print("📅 Festival Calendar: Ready")
-#     print("🎒 Packing List Generator: Ready")
-#     print("🌐 http://127.0.0.1:5000")
-#     print("="*70 + "\n")
-#     app.run(debug=True)
-#     app = app
-
-# At the very bottom of app.py - ADD THIS
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render gives us a PORT
-    app.run(host="0.0.0.0", port=port, debug=False)  # debug=False for production
+if __name__ == '__main__':
+    print("\n" + "="*70)
+    print("🚀 Travel Advisor Starting...")
+    print("="*70)
+    print("🤖 Using Groq API as primary")
+    print("🔐 User authentication enabled")
+    print("📁 SQLite database: users.db")
+    print("🌤️  Weather API: Connected")
+    print("📄 PDF generation: Ready")
+    print("📅 Festival Calendar: Ready")
+    print("🎒 Packing List Generator: Ready")
+    print("📅 Booking Feature: Ready")
+    print("🌐 http://127.0.0.1:5000")
+    print("="*70 + "\n")
+    app.run(debug=True)

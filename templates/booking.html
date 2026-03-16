@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Book {{ destination }} Trip{% endblock %}
+
+{% block extra_css %}
+<style>
+    .booking-header {
+        background: linear-gradient(135deg, #0b1e33 0%, #1a3a5c 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .booking-card {
+        background: var(--navy-800);
+        border: 1px solid var(--border-default);
+        border-radius: var(--r-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        height: 100%;
+    }
+    
+    .price-summary {
+        background: rgba(26,127,255,0.1);
+        border: 1px solid var(--border-default);
+        border-radius: var(--r-md);
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+    
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+    }
+    
+    .price-row.total {
+        border-bottom: none;
+        font-weight: 700;
+        color: var(--cyan-300);
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+    }
+    
+    .booking-status {
+        display: inline-block;
+        padding: 0.2rem 1rem;
+        border-radius: var(--r-full);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .status-confirmed {
+        background: rgba(0,196,180,0.15);
+        color: var(--teal-300);
+        border: 1px solid var(--teal-400);
+    }
+    
+    .status-cancelled {
+        background: rgba(255,61,90,0.15);
+        color: var(--red-300);
+        border: 1px solid var(--red-400);
+    }
+    
+    .booking-item {
+        background: var(--navy-800);
+        border: 1px solid var(--border-default);
+        border-radius: var(--r-lg);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all var(--t-normal);
+    }
+    
+    .booking-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--cyan-400);
+        box-shadow: var(--glow-cyan);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--navy-800);
+        border-radius: var(--r-lg);
+        border: 1px solid var(--border-default);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- If we're on the booking form page (has destination parameter) -->
+{% if destination %}
+<!-- Booking Form Header -->
+<div class="booking-header">
+    <div class="container">
+        <h1 class="mb-1">Book Your Trip to {{ destination|title }}</h1>
+        <p class="mb-0">Fill in the details below to confirm your booking</p>
+    </div>
+</div>
+
+<!-- Main Content - Booking Form -->
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="booking-card">
+                <h4 class="mb-4 text-white">Booking Details</h4>
+                
+                <form method="POST" action="{{ url_for('book_destination', destination=destination) }}">
+                    <!-- Check-in Date -->
+                    <div class="mb-3">
+                        <label class="form-label">Check-in Date</label>
+                        <input type="date" name="check_in" class="form-control" 
+                               min="{{ now }}" required>
+                    </div>
+                    
+                    <!-- Check-out Date -->
+                    <div class="mb-3">
+                        <label class="form-label">Check-out Date</label>
+                        <input type="date" name="check_out" class="form-control" 
+                               min="{{ now }}" required>
+                    </div>
+                    
+                    <!-- Number of Guests -->
+                    <div class="mb-3">
+                        <label class="form-label">Number of Guests</label>
+                        <select name="guests" class="form-select" required>
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4 Guests</option>
+                            <option value="5">5+ Guests</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Additional Requests -->
+                    <div class="mb-4">
+                        <label class="form-label">Special Requests (Optional)</label>
+                        <textarea name="requests" class="form-control" rows="3" 
+                                  placeholder="Any special requirements? (e.g., dietary restrictions, room preferences)"></textarea>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check-circle me-2"></i>Confirm Booking
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="booking-card">
+                <h5 class="mb-3 text-white">Price Summary</h5>
+                
+                <div class="price-summary">
+                    <div class="price-row">
+                        <span>🏨 Hotel (per night)</span>
+                        <span>₹3,500</span>
+                    </div>
+                    <div class="price-row">
+                        <span>🎟️ Activities package</span>
+                        <span>₹2,500</span>
+                    </div>
+                    <div class="price-row">
+                        <span>🍽️ Food package</span>
+                        <span>₹1,500</span>
+                    </div>
+                    <div class="price-row">
+                        <span>💰 Taxes & fees</span>
+                        <span>₹800</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span>₹8,300</span>
+                    </div>
+                </div>
+                
+                <p class="text-muted mt-3 small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Prices are estimates based on your trip preferences.
+                    Final price may vary based on actual dates and availability.
+                </p>
+                
+                <hr class="my-3" style="border-color: var(--border-default);">
+                
+                <div class="d-flex align-items-center gap-2 text-muted small">
+                    <i class="bi bi-shield-check text-success"></i>
+                    <span>Secure booking • Free cancellation • Best price guarantee</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- If we're on the my-bookings page (has bookings parameter) -->
+{% elif bookings is defined %}
+<!-- My Bookings Page -->
+<div class="container my-4">
+    <h2 class="mb-4">My Bookings</h2>
+    
+    {% if bookings %}
+        {% for booking in bookings %}
+        <div class="booking-item">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <h5 class="mb-1 text-white">{{ booking.destination|title }}</h5>
+                    <small class="text-muted">Booking #{{ booking.id }}</small>
+                </div>
+                <div class="col-md-3">
+                    <i class="bi bi-calendar me-1" style="color: var(--cyan-400);"></i>
+                    <span class="text-secondary">{{ booking.check_in }} to {{ booking.check_out }}</span>
+                </div>
+                <div class="col-md-2">
+                    <i class="bi bi-people me-1" style="color: var(--cyan-400);"></i>
+                    <span class="text-secondary">{{ booking.guests }} Guest(s)</span>
+                </div>
+                <div class="col-md-2">
+                    <strong class="text-white">₹{{ booking.total_price }}</strong>
+                </div>
+                <div class="col-md-2">
+                    <span class="booking-status status-{{ booking.status }}">
+                        {{ booking.status|upper }}
+                    </span>
+                    {% if booking.status == 'confirmed' %}
+                    <form method="POST" action="{{ url_for('cancel_booking', booking_id=booking.id) }}" class="d-inline ms-2">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                onclick="return confirm('Are you sure you want to cancel this booking?')">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="bi bi-calendar-x" style="font-size: 4rem; color: var(--text-muted);"></i>
+            <h4 class="mt-3 text-white">No Bookings Yet</h4>
+            <p class="text-secondary">You haven't made any bookings. Plan a trip and book now!</p>
+            <a href="/" class="btn btn-primary mt-3">
+                <i class="bi bi-search me-2"></i>Plan a Trip
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Fallback (should never happen) -->
+{% else %}
+<div class="container my-5 text-center">
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        Invalid page access. Please use the navigation menu.
+    </div>
+</div>
+{% endif %}
+{% endblock %}
